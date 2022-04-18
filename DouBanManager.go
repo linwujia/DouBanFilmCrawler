@@ -2,18 +2,21 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"sync"
 )
 
 type DouBanManager struct {
 
+	startPage uint
+	endPage uint
 	pageGetters []*PageGetter
 	pageParse []*PageParse
 }
 
 func NewDouBanManager(start, end uint) *DouBanManager {
 	manager := &DouBanManager{
+		startPage:  start,
+		endPage: end,
 		pageGetters: make([]*PageGetter, end - start + 1),
 		pageParse:   make([]*PageParse, end - start + 1),
 	}
@@ -52,10 +55,17 @@ func (m DouBanManager) Run()  {
 }
 
 func (m *DouBanManager) SendPageData(data *PageData)  {
-	file, err := os.Create(fmt.Sprintf("page%d.html", data.index))
-	if err != nil {
-		fmt.Println("create file error", err)
+
+	index := data.index - m.startPage
+	if index < 0 || index > (m.endPage - m.startPage) {
+		fmt.Errorf("send page data error, index %d less than zero or over page size %d", index, m.endPage - m.endPage)
+		return
 	}
-	defer file.Close()
-	file.WriteString(data.data)
+	parse := m.pageParse[index]
+	if parse == nil {
+		fmt.Errorf("get page parse error, parse is null")
+		return
+	}
+
+	parse.SendPageData(data)
 }
