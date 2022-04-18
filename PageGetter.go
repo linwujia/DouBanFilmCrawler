@@ -21,7 +21,16 @@ func NewPageGetter(url string, index uint, manager *DouBanManager) (getter *Page
 }
 
 func (g *PageGetter) Run() {
-	resp, err := http.Get(g.url)
+
+	request, err := http.NewRequest("GET", g.url, nil)
+	//resp, err := http.Get(g.url)
+	if err != nil {
+		fmt.Errorf("PageGetter Run new request error %e", err)
+		return
+	}
+
+	request.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.88 Safari/537.36")
+	resp, err := http.DefaultClient.Do(request)
 	if err != nil {
 		fmt.Errorf("PageGetter Run get data error %e", err)
 		return
