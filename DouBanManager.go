@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"github.com/golang/glog"
 	"sync"
 )
 
@@ -58,13 +58,11 @@ func (m *DouBanManager) SendPageData(data *PageData)  {
 
 	index := data.index - m.startPage
 	if index < 0 || index > (m.endPage - m.startPage) {
-		fmt.Errorf("send page data error, index %d less than zero or over page size %d", index, m.endPage - m.endPage)
-		return
+		glog.Fatalf("send page data error, index %d less than zero or over page size %d", index, m.endPage - m.endPage)
 	}
 	parse := m.pageParse[index]
 	if parse == nil {
-		fmt.Errorf("get page parse error, parse is null")
-		return
+		glog.Fatalf("get page parse error, parse is null")
 	}
 
 	parse.SendPageData(data)

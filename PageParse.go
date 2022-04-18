@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/golang/glog"
 	"os"
 	"regexp"
 )
@@ -31,15 +32,15 @@ func (p *PageParse) SendPageData(data *PageData)  {
 func (p *PageParse) parsePageData(data *PageData)  {
 	filmNameReg := regexp.MustCompile(`<img width="100" alt="(?s:(.*?))"`)
 	filmNames := filmNameReg.FindAllStringSubmatch(data.data, -1)
-	fmt.Println(filmNames)
+	glog.Infoln(filmNames)
 
 	filmScoreReg := regexp.MustCompile(`<span class="rating_num" property="v:average">(.*)</span>`)
 	filmScores := filmScoreReg.FindAllStringSubmatch(data.data, -1)
-	fmt.Println(filmScores)
+	glog.Infoln(filmScores)
 
 	filmScoreNumReg := regexp.MustCompile(`<span>(.*)人评价</span>`)
 	filmScoreNum := filmScoreNumReg.FindAllStringSubmatch(data.data, -1)
-	fmt.Println(filmScoreNum)
+	glog.Infoln(filmScoreNum)
 
 	films := make([]FilmData, len(filmNames))
 	for i := 0; i < len(films); i++ {
@@ -52,7 +53,7 @@ func (p *PageParse) parsePageData(data *PageData)  {
 
 	err := p.save2File(films, data.index)
 	if err != nil {
-		fmt.Errorf("%d page data save to File error %e", data.index, err)
+		glog.Errorf("%d page data save to File error %e", data.index, err)
 	}
 }
 
