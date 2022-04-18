@@ -10,6 +10,7 @@ func main() {
 	logDir := flag.String("l", "log", "log directory")
 	start := flag.Uint("s", 1, "start page index")
 	end := flag.Uint("e", 10, "end page index")
+	flag.Parse()
 
 	if *start > *end {
 		glog.Fatalln("start page over than end page")
